@@ -1,4 +1,4 @@
-import { createContext, useReduer } from "react";
+import { createContext, useReducer } from "react";
 
 const DUMMY_EXPENSES = [
   {
@@ -47,13 +47,13 @@ const DUMMY_EXPENSES = [
     id: "e8",
     description: "Another book",
     amount: 18.59,
-    date: new Date("2026-02-18"),
+    date: new Date("2026-06-03"),
   },
   {
     id: "e9",
     description: "Another book",
     amount: 18.59,
-    date: new Date("2026-02-18"),
+    date: new Date("2026-06-02"),
   },
 ];
 
@@ -67,7 +67,7 @@ export const ExpensesContext = createContext({
 function expensesReducer(state, action) {
   switch (action.type) {
     case "ADD":
-      const id = new Date().toString().Math.random().toString();
+      const id = new Date().toString() + Math.random().toString();
       return [{ ...action.payload, id: id }, ...state];
     case "UPDATE":
       const updatableExpenseIndex = state.findIndex(
@@ -85,7 +85,7 @@ function expensesReducer(state, action) {
   }
 }
 
-function ExpensesContextProvider() {
+function ExpensesContextProvider({ children }) {
   const [expensesState, dispatch] = useReducer(expensesReducer, DUMMY_EXPENSES);
 
   function addExpense({ expenseData }) {
@@ -107,7 +107,11 @@ function ExpensesContextProvider() {
     updateExpense: updateExpense,
   };
 
-  return <ExpensesContext.Provider value={value}>{children}</ExpensesContext.Provider>;
+  return (
+    <ExpensesContext.Provider value={value}>
+      {children}
+    </ExpensesContext.Provider>
+  );
 }
 
 export default ExpensesContextProvider;
