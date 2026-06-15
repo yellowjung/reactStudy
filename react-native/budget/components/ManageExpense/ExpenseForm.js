@@ -19,7 +19,15 @@ function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
     });
   }
 
-  function submitHandler() {}
+  function submitHandler() {
+    const expenseData = {
+      amount: +inputValues.amount,
+      date: new Date(inputValues.date),
+      description: inputValues.description,
+    };
+
+    onSubmit(expenseData);
+  }
 
   return (
     <View style={styles.form}>
@@ -39,7 +47,7 @@ function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
           label="Date"
           textInputConfig={{
             placeholder: "YYYY-MM-DD",
-            maxLength: 8,
+            maxLength: 10,
             onChangeText: inputChangedHandler.bind(this, "date"),
             value: inputValues.date,
           }}
