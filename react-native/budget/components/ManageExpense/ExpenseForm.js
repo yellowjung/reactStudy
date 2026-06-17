@@ -1,20 +1,30 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Alert } from "react-native";
 import Input from "./Input";
 import { useState } from "react";
 import Button from "../UI/Button";
+import { getFormattedDate } from "../../util/date";
 
-function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
-  const [inputValues, setInputValues] = useState({
-    amount: "",
-    date: "",
-    description: "",
+function ExpenseForm({ submitButtonLabel, onCancel, onSubmit, defaultValues }) {
+  const [inputs, setInputs] = useState({
+    amount: {
+      value: defaultValues ? defaultValues.amount.toString() : "",
+      isValid: !!defaultValues,
+    },
+    date: {
+      value: defaultValues ? getFormattedDate(defaultValues.date) : "",
+      isValid: !!defaultValues,
+    },
+    description: {
+      value: defaultValues ? defaultValues.description : "",
+      isValid: !!defaultValues,
+    },
   });
 
   function inputChangedHandler(inputIdentifier, enteredValue) {
-    setInputValues((curInputValues) => {
+    setInputs((curInputs) => {
       return {
-        ...curInputValues,
-        [inputIdentifier]: enteredValue,
+        ...curInputs,
+        [inputIdentifier]: { value: enteredValue, isValid: true },
       };
     });
   }
@@ -25,6 +35,15 @@ function ExpenseForm({ submitButtonLabel, onCancel, onSubmit }) {
       date: new Date(inputValues.date),
       description: inputValues.description,
     };
+
+    const amountIsValid = !isNaN(expenseData.amount) && expenseData.amount > 0;
+    const dateIsValid = expenseData.date.toString() !== "Invalid Date";
+    const descriptionIsValid = expenseData.description.trim().length > 0;
+
+    if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
+      Alert.alert("Invalid input", "Please check your input values");
+      return;
+    }
 
     onSubmit(expenseData);
   }
